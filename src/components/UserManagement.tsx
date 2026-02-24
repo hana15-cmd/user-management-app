@@ -4,7 +4,7 @@ import { generateDummyUsers } from "../data/mockData";
 import UserStats from "./UserStats";
 import UserTable from "./UserTable";
 import UserModal from "./UserModal";
-import "../styles/UserManagement.css";
+import "../styles/userManagement.css";
 
 interface UserManagementProps {
   currentUser: AuthUser;

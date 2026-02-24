@@ -33,12 +33,12 @@ export default defineConfig({
     cssCodeSplit: false,
   },
   preview: {
-    port: 5004,
+    port: 5003,
     strictPort: true,
     cors: true,
   },
   server: {
-    port: 5004,
+    port: 5003,
     strictPort: true,
     cors: true,
   },
