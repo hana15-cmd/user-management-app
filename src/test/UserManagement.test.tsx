@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserManagement from '../components/UserManagement';
@@ -113,5 +113,67 @@ describe('UserManagement', () => {
     render(<UserManagement currentUser={mockAdminUser} />);
     expect(screen.getAllByText('Edit').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Delete').length).toBeGreaterThan(0);
+  });
+
+  it('should update an existing user', async () => {
+    const user = userEvent.setup();
+    render(<UserManagement currentUser={mockAdminUser} />);
+    
+    // Click edit on first user
+    const editButtons = screen.getAllByText('Edit');
+    await user.click(editButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Edit User')).toBeInTheDocument();
+    });
+
+    const nameInput = screen.getByPlaceholderText('Enter name');
+    await user.clear(nameInput);
+    await user.type(nameInput, 'Updated Name');
+    
+    const saveButton = screen.getByText('Update');
+    await user.click(saveButton);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Updated Name')).toBeInTheDocument();
+    });
+  });
+
+  it('should delete a user after confirmation', async () => {
+    const user = userEvent.setup();
+    
+    // Mock window.confirm to return true
+    window.confirm = vi.fn(() => true);
+    
+    render(<UserManagement currentUser={mockAdminUser} />);
+    
+    const initialUserCount = screen.getAllByText('Edit').length;
+    const deleteButtons = screen.getAllByText('Delete');
+    
+    await user.click(deleteButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getAllByText('Edit').length).toBe(initialUserCount - 1);
+    });
+    
+    expect(window.confirm).toHaveBeenCalledWith('Are you sure you want to delete this user?');
+  });
+
+  it('should not delete a user if confirmation is cancelled', async () => {
+    const user = userEvent.setup();
+    
+    // Mock window.confirm to return false
+    window.confirm = vi.fn(() => false);
+    
+    render(<UserManagement currentUser={mockAdminUser} />);
+    
+    const initialUserCount = screen.getAllByText('Edit').length;
+    const deleteButtons = screen.getAllByText('Delete');
+    
+    await user.click(deleteButtons[0]);
+    
+    await waitFor(() => {
+      expect(screen.getAllByText('Edit').length).toBe(initialUserCount);
+    });
   });
 });

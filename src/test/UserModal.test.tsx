@@ -209,4 +209,73 @@ describe('UserModal', () => {
 
     expect(screen.getByText('Update')).toBeInTheDocument();
   });
+
+  it('should call onChange when selecting role', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = vi.fn();
+    const mockOnSave = vi.fn();
+    const mockOnClose = vi.fn();
+
+    render(
+      <UserModal
+        isOpen={true}
+        onClose={mockOnClose}
+        form={mockForm}
+        onFormChange={mockOnChange}
+        onSave={mockOnSave}
+        editingUser={null}
+      />
+    );
+
+    const roleSelect = screen.getByDisplayValue('Viewer');
+    await user.selectOptions(roleSelect, 'admin');
+
+    expect(mockOnChange).toHaveBeenCalledWith('role', 'admin');
+  });
+
+  it('should call onChange when selecting status', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = vi.fn();
+    const mockOnSave = vi.fn();
+    const mockOnClose = vi.fn();
+
+    render(
+      <UserModal
+        isOpen={true}
+        onClose={mockOnClose}
+        form={mockForm}
+        onFormChange={mockOnChange}
+        onSave={mockOnSave}
+        editingUser={null}
+      />
+    );
+
+    const statusSelect = screen.getByDisplayValue('Active');
+    await user.selectOptions(statusSelect, 'Inactive');
+
+    expect(mockOnChange).toHaveBeenCalledWith('status', 'Inactive');
+  });
+
+  it('should call onChange when typing in email field', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = vi.fn();
+    const mockOnSave = vi.fn();
+    const mockOnClose = vi.fn();
+
+    render(
+      <UserModal
+        isOpen={true}
+        onClose={mockOnClose}
+        form={{ ...mockForm, email: '' }}
+        onFormChange={mockOnChange}
+        onSave={mockOnSave}
+        editingUser={null}
+      />
+    );
+
+    const emailInput = screen.getByPlaceholderText('Enter email');
+    await user.type(emailInput, 'test@example.com');
+
+    expect(mockOnChange).toHaveBeenCalled();
+  });
 });
