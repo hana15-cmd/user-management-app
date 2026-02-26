@@ -26,7 +26,7 @@ describe('UserManagement', () => {
     render(<UserManagement currentUser={mockAdminUser} />);
     expect(screen.getByText('Total Users')).toBeInTheDocument();
     expect(screen.getByText('Active Users')).toBeInTheDocument();
-    expect(screen.getByText('Admin Users')).toBeInTheDocument();
+    expect(screen.getByText('Admins')).toBeInTheDocument();
   });
 
   it('should render UserTable', () => {
@@ -85,15 +85,17 @@ describe('UserManagement', () => {
     const addButton = screen.getByText('+ Add User');
     await user.click(addButton);
     
-    await waitFor(async () => {
-      const nameInput = screen.getByPlaceholderText('Enter name');
-      const emailInput = screen.getByPlaceholderText('Enter email');
-      const saveButton = screen.getByText('Add User');
-      
-      await user.type(nameInput, 'New User');
-      await user.type(emailInput, 'newuser@test.com');
-      await user.click(saveButton);
+    await waitFor(() => {
+      expect(screen.getByText('Add New User')).toBeInTheDocument();
     });
+
+    const nameInput = screen.getByPlaceholderText('Enter name');
+    const emailInput = screen.getByPlaceholderText('Enter email');
+    const saveButton = screen.getByText('Add');
+    
+    await user.type(nameInput, 'New User');
+    await user.type(emailInput, 'newuser@test.com');
+    await user.click(saveButton);
     
     await waitFor(() => {
       expect(screen.getByText('New User')).toBeInTheDocument();

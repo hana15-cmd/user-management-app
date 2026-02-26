@@ -162,7 +162,7 @@ describe('UserModal', () => {
       />
     );
 
-    const saveButton = screen.getByText('Add User');
+    const saveButton = screen.getByText('Add');
     await user.click(saveButton);
 
     expect(mockOnSave).toHaveBeenCalled();
@@ -207,6 +207,6 @@ describe('UserModal', () => {
       />
     );
 
-    expect(screen.getByText('Update User')).toBeInTheDocument();
+    expect(screen.getByText('Update')).toBeInTheDocument();
   });
 });

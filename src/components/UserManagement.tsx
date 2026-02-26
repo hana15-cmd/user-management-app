@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { User, AuthUser } from "../types";
 import { generateDummyUsers } from "../data/mockData";
 import UserStats from "./UserStats";
@@ -27,18 +27,30 @@ export default function UserManagement({ currentUser }: UserManagementProps) {
     setForm({ ...form, [field]: value });
   };
 
-  const handleAdd = () => {
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingUser(null);
+    setForm({
+      name: "",
+      email: "",
+      role: "viewer",
+      status: "Active",
+    });
+  }, []);
+
+  const handleAdd = useCallback(() => {
+    const timestamp = Date.now();
     const newUser: User = {
-      id: Date.now(),
+      id: timestamp,
       name: form.name,
       email: form.email,
       role: form.role,
       status: form.status,
       createdAt: new Date().toISOString().split('T')[0],
     };
-    setUsers([newUser, ...users]);
+    setUsers((prevUsers) => [newUser, ...prevUsers]);
     closeModal();
-  };
+  }, [form, closeModal]);
 
   const handleEdit = (user: User) => {
     setEditingUser(user);
@@ -77,17 +89,6 @@ export default function UserManagement({ currentUser }: UserManagementProps) {
       status: "Active",
     });
     setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingUser(null);
-    setForm({
-      name: "",
-      email: "",
-      role: "viewer",
-      status: "Active",
-    });
   };
 
   return (
